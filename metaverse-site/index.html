@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>METAVERSE - Discover Real Learning in Digital Spaces</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 300;
+            color: #1a1a1a;
+            line-height: 1.8;
+            background: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-logo {
+            width: 120px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.4s ease;
+        }
+
+        header.scrolled {
+            padding: 15px 60px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo img {
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover img {
+            transform: scale(1.05);
+        }
+
+        nav {
+            display: flex;
+            gap: 50px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #b8434e;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        nav a:hover {
+            color: #b8434e;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 60px 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .hero-image-container:hover .hero-image {
+            transform: scale(1.02);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3));
+            pointer-events: none;
+        }
+
+        .hero-caption {
+            font-size: 11px;
+            color: #888;
+            margin-top: 15px;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeIn 1s ease 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Section Common */
+        section {
+            padding: 100px 60px;
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Future Section */
+        .future-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .future-content h2 {
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .section-label {
+            font-size: 13px;
+            color: #b8434e;
+            margin-bottom: 25px;
+            font-style: italic;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-label::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 1px;
+            background: #b8434e;
+        }
+
+        .future-content p {
+            font-size: 14px;
+            line-height: 2;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        .future-image img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            transition: all 0.5s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .future-image:hover img {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Dept Section */
+        .dept-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dept-image img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            transition: all 0.5s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .dept-image:hover img {
+            transform: translateY(-10px) rotate(-2deg);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .dept-content h2 {
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .dept-content p {
+            font-size: 14px;
+            line-height: 2;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        /* Journey Section */
+        .journey-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .journey-logo {
+            display: flex;
+            justify-content: center;
+        }
+
+        .journey-logo img {
+            width: 250px;
+            transition: transform 0.6s ease;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .journey-content h2 {
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .journey-content p {
+            font-size: 14px;
+            line-height: 2;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: #e8eaed;
+            text-align: center;
+            padding: 100px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .contact-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 400;
+            letter-spacing: 12px;
+            margin-bottom: 50px;
+            color: #1a1a1a;
+            position: relative;
+        }
+
+        .contact-button {
+            display: inline-block;
+            position: relative;
+            background: #fff;
+            border: 3px solid #1a1a1a;
+            padding: 20px 80px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #1a1a1a;
+            text-decoration: none;
+            margin-bottom: 15px;
+            box-shadow: 6px 6px 0 #d4c857;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .contact-button:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0 #d4c857;
+            background: #d4c857;
+        }
+
+        .contact-button::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid #1a1a1a;
+        }
+
+        .contact-button::before {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 12px solid #fff;
+            z-index: 1;
+            transition: border-top-color 0.3s;
+        }
+
+        .contact-button:hover::before {
+            border-top-color: #d4c857;
+        }
+
+        .contact-desc {
+            margin-top: 60px;
+            font-size: 14px;
+            line-height: 2;
+            color: #444;
+            position: relative;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            background: #fff;
+        }
+
+        .footer-left img {
+            width: 150px;
+            margin-bottom: 40px;
+            transition: transform 0.3s;
+        }
+
+        .footer-left img:hover {
+            transform: scale(1.05);
+        }
+
+        .footer-line {
+            width: 100%;
+            height: 1px;
+            background: #ccc;
+            margin: 30px 0;
+        }
+
+        .footer-copyright {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-links a {
+            font-size: 12px;
+            color: #1a1a1a;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .footer-links a::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: #b8434e;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #b8434e;
+        }
+
+        .footer-links a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            background: #b8434e;
+            transform: translateY(-5px);
+        }
+
+        .scroll-top svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Cursor Effect */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #b8434e;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor.hover {
+            transform: translate(-50%, -50%) scale(1.5);
+            background: rgba(184, 67, 78, 0.1);
+        }
+
+        /* Parallax Effect */
+        .parallax-container {
+            overflow: hidden;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .cursor {
+                display: none;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px 30px;
+            }
+
+            header.scrolled {
+                padding: 15px 30px;
+            }
+
+            nav {
+                gap: 25px;
+            }
+
+            .hero {
+                padding: 120px 30px 20px;
+            }
+
+            section {
+                padding: 60px 30px;
+            }
+
+            .future-section,
+            .dept-section,
+            .journey-section {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .future-image,
+            .dept-image {
+                order: -1;
+            }
+
+            .future-image img,
+            .dept-image img {
+                max-width: 100%;
+            }
+
+            footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 30px;
+            }
+
+            .contact-section h2 {
+                font-size: 32px;
+                letter-spacing: 6px;
+            }
+
+            .contact-button {
+                padding: 15px 50px;
+                font-size: 16px;
+            }
+        }
+
+        /* Text Highlight Animation */
+        .highlight {
+            background: linear-gradient(120deg, #d4c857 0%, #d4c857 100%);
+            background-repeat: no-repeat;
+            background-size: 0% 40%;
+            background-position: 0 90%;
+            transition: background-size 0.4s ease;
+        }
+
+        .highlight.active {
+            background-size: 100% 40%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <img src="footer-logo.png" alt="Loading..." class="loading-logo">
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="METAVERSE">
+        </div>
+        <nav>
+            <a href="#">home</a>
+            <a href="#">Instagram</a>
+            <a href="#">youtube</a>
+            <a href="#">online magzin</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-image-container parallax-container">
+                <img src="hero-image.jpg" alt="METAVERSE Campus" class="hero-image" data-parallax="0.1">
+                <div class="hero-overlay"></div>
+            </div>
+            <p class="hero-caption">Photos taken during the activity.</p>
+        </section>
+
+        <!-- Future Section -->
+        <section>
+            <div class="future-section">
+                <div class="future-content reveal-left">
+                    <h2>誰もが、どこにいても、いつでも、<br>知ることのできる大学</h2>
+                    <p class="section-label">-Future-</p>
+                    <p>「メタバースプロジェクト」は、当初オンライン授業の利便性向上を目指していましたが、ポストコロナ時代における教育課題と整合し、「授業記録「のオープンキャンパス体験の提供」へと方向を変更しました。現在はオープンキャンパスに参加できずキャンパスライフを想像しづらい方々一人ひとりの体験を大切にしています。年齢や障害の有無など関係なく多様な「問い」を抱える全ての方々の好奇心を満たす<span class="highlight">「研究の共有地（コモンズ）」</span>として運用しています。</p>
+                    <p>本プロジェクトでは、来た人の知を活用/創造します。「ゼロから何かを作りたい」「技術開発がしたい」「プレゼン技術を向上させたい」などの理由で10名、新たなスキルを学習・経験した大学生活を送りませんか？</p>
+                </div>
+                <div class="future-image reveal-right">
+                    <img src="section2-image.jpg" alt="Team member">
+                </div>
+            </div>
+        </section>
+
+        <!-- Dept Section -->
+        <section>
+            <div class="dept-section">
+                <div class="dept-image reveal-left">
+                    <img src="section1-image.jpg" alt="Virtual campus">
+                </div>
+                <div class="dept-content reveal-right">
+                    <h2>プロジェクトを支える３つの部門</h2>
+                    <p class="section-label">-Dept.-</p>
+                    <p>私たちのプロジェクトには、現在<span class="highlight">「企画部門」「制作部門」「広報部門」</span>の３つの部門があります。それぞれの活動内容や特色について説明いたします。</p>
+                    <p>「企画部門」は主に新しい企画の立案や今後の展望を計画の検討を担当しています。また、この部分はメンバー全体経験的にも、プロジェクトを大学外部に発信するスキルを向上させることができます。</p>
+                    <p>「制作部門」は主にメタバース空間の制作などのようなモノづくりを担当しています。制作に必要となるプログラミングや3Dモデル制作を学習しながら活動することが可能です。</p>
+                    <p>「広報部門」は主にプロジェクトの対外的な情報発信を担当しています。オンラインマガジンの執筆や各イベントでの広報活動など、プロジェクトや情報や大学の研究の魅力を発信し、プロジェクトを支えています。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Journey Section -->
+        <section>
+            <div class="journey-section">
+                <div class="journey-logo reveal-left">
+                    <img src="footer-logo.png" alt="METAVERSE Logo">
+                </div>
+                <div class="journey-content reveal-right">
+                    <h2>これまでのメタバースプロジェクト<br>と今後の展望。</h2>
+                    <p class="section-label">-Journey-</p>
+                    <p>これまで私たちは、道内だけでも先進的に取り組むことができるよう北海道科学大学の知名度を教育的機関として高めてきました。当初は「時間のキャンパスを体験したい」というヘルプユーザに焦点をあてておりましたが、最新の教育手段を用い、低温操作を加えることで、より多くの人々に触感を提供できるような取組みにも広がっています。</p>
+                    <p>また、学内発での初モデリング作業の独自資料はスケールな制作していたものが、メンバーを増加し本質重ねてきました。今後は、進学を考える高校生の皆様に<span class="highlight">「どこにいても大学の研究を調べられる」</span>ことができるよう努力していきます。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section">
+            <div class="reveal">
+                <h2>contact</h2>
+                <a href="#" class="contact-button">お問い合わせはこちらから</a>
+                <p class="contact-desc">本プロジェクトに関わること、また何かご相談やご連絡、大学内でのお誘いがございましたら、<br>気軽にこちらへご連絡ください、お問い合わせお待ちしております。</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            <img src="footer-logo.png" alt="METAVERSE">
+            <div class="footer-line"></div>
+            <p class="footer-copyright">Copyright © Hokkaido University of Science Metaverse project All rights reserved.</p>
+        </div>
+        <div class="footer-links">
+            <a href="#">note</a>
+            <a href="#">X/Twitter</a>
+            <a href="#">Instagram</a>
+            <a href="#">youtube</a>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </button>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.loading-screen').classList.add('hidden');
+            }, 1500);
+        });
+
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Cursor hover effect
+        const hoverElements = document.querySelectorAll('a, button, .future-image, .dept-image');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Header scroll effect
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll reveal animation
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+        
+        const revealOnScroll = () => {
+            revealElements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+
+        // Highlight animation
+        const highlights = document.querySelectorAll('.highlight');
+        
+        const highlightOnScroll = () => {
+            highlights.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', highlightOnScroll);
+
+        // Scroll to top button
+        const scrollTopBtn = document.querySelector('.scroll-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Parallax effect for hero image
+        const heroImage = document.querySelector('.hero-image');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            if (heroImage) {
+                heroImage.style.transform = `translateY(${scrolled * 0.15}px)`;
+            }
+        });
+
+        // Smooth anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
